@@ -18,11 +18,11 @@ class M1_OPT:
         self.stop()
 
     @property
-    def reset(self):
+    def ls_reset(self):
         return GPIO.input(self.input_reset)
 
     @property
-    def set(self):
+    def ls_set(self):
         return GPIO.input(self.input_set)
 
     def __positive(self):
@@ -30,7 +30,7 @@ class M1_OPT:
         GPIO.output(self.pos, True)
         GPIO.output(self.neg, False)
 
-    def __back(self):
+    def __negative(self):
         print("m1 negative")
         GPIO.output(self.pos, False)
         GPIO.output(self.neg, True)
@@ -40,26 +40,31 @@ class M1_OPT:
         GPIO.output(self.pos, False)
         GPIO.output(self.neg, False)
 
-    def front(self):
+    def positive(self):
         self.__positive()
         start = time.time()
         while True:
             # print(self.set)
-            if self.set == True or time.time() - start > 1.4:
+            if self.ls_set == True or time.time() - start > 1.5:
                 self.stop()
                 break
 
-    def back(self):
-        self.__back()
+    def negative(self):
+        self.__negative()
         start = time.time()
         while True:
             # print(self.reset)
-            if self.reset == True or time.time() - start > 1.35:
+            if self.ls_reset == True or time.time() - start > 1.5:
                 self.stop()
                 self.__positive()
                 time.sleep(0.01)
                 self.stop()
                 break
+
+    def move(self):
+        self.positive()
+        time.sleep(1)
+        self.negative()
 
 
 class M2_OPT:
@@ -76,11 +81,11 @@ class M2_OPT:
         self.stop()
 
     @property
-    def reset(self):
+    def ls_reset(self):
         return GPIO.input(self.input_reset)
 
     @property
-    def set(self):
+    def ls_set(self):
         return GPIO.input(self.input_set)
 
     def __positive(self):
@@ -103,7 +108,7 @@ class M2_OPT:
         start = time.time()
         while True:
             # print(self.set)
-            if self.set == True or time.time() - start > 1.7:
+            if self.ls_set == True or time.time() - start > 1.7:
                 self.stop()
                 break
 
@@ -112,7 +117,7 @@ class M2_OPT:
         start = time.time()
         while True:
             # print(self.set)
-            if self.set == True or time.time() - start > 1.7:
+            if self.ls_set == True or time.time() - start > 1.7:
                 self.stop()
                 break
 
@@ -121,32 +126,36 @@ class M2_OPT:
             if type == 0:
                 break
             elif type == 1:
+                # print("set = ",m2.ls_set)
                 self.__positive()
                 start = time.time()
-                if self.set == True or (time.time() - start) > 1.7:
+                if self.ls_set == True or (time.time() - start) > 1.7:
                     self.stop()
                     break
             elif type == 2:
+                # print("set = ",m2.ls_set)
                 self.__negative()
                 start = time.time()
-                if self.set == True or (time.time() - start) > 1.7:
+                if self.ls_set == True or (time.time() - start) > 1.7:
                     self.stop()
                     break
 
-    def allreset(self, type):
+    def reset(self, type):
         while True:
             if type == 0:
                 break
             elif type == 1:
                 self.__negative()
                 start = time.time()
-                if self.reset == True or time.time() - start > 1.7:
+                # print(self.ls_reset)
+                if self.ls_reset == True or time.time() - start > 1.7:
                     self.stop()
                     break
             elif type == 2:
                 self.__positive()
                 start = time.time()
-                if self.reset == True or time.time() - start > 1.7:
+                # print(self.ls_reset)
+                if self.ls_reset == True or time.time() - start > 1.7:
                     self.stop()
                     break
 
@@ -161,14 +170,12 @@ if __name__ == "__main__":
         id = int(input("0/1/2/3="))
         if id == 3:
             break
-        elif (id == 0) or (id == 1) or (id == 2):
+        elif id == 0 or id == 1 or id == 2:
             m2.move(id)
             time.sleep(0.1)
-            m1.front()
-            time.sleep(1)
-            m1.back()
+            m1.move()
             time.sleep(0.1)
-            m2.allreset(id)
+            m2.reset(id)
         else:
             continue
     GPIO.cleanup()
