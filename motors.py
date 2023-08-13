@@ -45,7 +45,7 @@ class M1_OPT:
         start = time.time()
         while True:
             # print(self.set)
-            if self.ls_set == True or time.time() - start > 1.5:
+            if self.ls_set == True or time.time() - start > 1.35:
                 self.stop()
                 break
 
@@ -54,14 +54,14 @@ class M1_OPT:
         start = time.time()
         while True:
             # print(self.reset)
-            if self.ls_reset == True or time.time() - start > 1.5:
+            if self.ls_reset == True or time.time() - start > 1.35:
                 self.stop()
                 self.__positive()
                 time.sleep(0.01)
                 self.stop()
                 break
 
-    def move(self):
+    def move(self, id):
         self.positive()
         time.sleep(1)
         self.negative()
@@ -126,14 +126,12 @@ class M2_OPT:
             if type == 0:
                 break
             elif type == 1:
-                # print("set = ",m2.ls_set)
                 self.__positive()
                 start = time.time()
                 if self.ls_set == True or (time.time() - start) > 1.7:
                     self.stop()
                     break
             elif type == 2:
-                # print("set = ",m2.ls_set)
                 self.__negative()
                 start = time.time()
                 if self.ls_set == True or (time.time() - start) > 1.7:
@@ -147,14 +145,12 @@ class M2_OPT:
             elif type == 1:
                 self.__negative()
                 start = time.time()
-                # print(self.ls_reset)
                 if self.ls_reset == True or time.time() - start > 1.7:
                     self.stop()
                     break
             elif type == 2:
                 self.__positive()
                 start = time.time()
-                # print(self.ls_reset)
                 if self.ls_reset == True or time.time() - start > 1.7:
                     self.stop()
                     break
